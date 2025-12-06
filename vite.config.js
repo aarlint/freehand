@@ -8,6 +8,6 @@ export default defineConfig({
   server: {
     host: true,
     cors: true,
-    allowedHosts: ['714b04015413.ngrok-free.app'],
+    allowedHosts: ['714b04015413.ngrok-free.app', 'freehand.arlint.dev'],
   },
 })
