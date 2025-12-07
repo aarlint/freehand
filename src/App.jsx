@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import getStroke from 'perfect-freehand'
 import { IoArrowBack, IoTrash, IoColorPalette, IoAdd } from 'react-icons/io5'
+import { BsEraser, BsPencilFill } from 'react-icons/bs'
 import './App.css'
 
 function App() {
@@ -11,11 +12,13 @@ function App() {
   const [context, setContext] = useState(null)
   const [currentStroke, setCurrentStroke] = useState([])
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isErasing, setIsErasing] = useState(false)
   const [showMenu, setShowMenu] = useState(true)
   const [drawings, setDrawings] = useState([])
   const [currentDrawingId, setCurrentDrawingId] = useState(null)
   const [saveStatus, setSaveStatus] = useState('')
   const [recentColors, setRecentColors] = useState(['#000000'])
+  const [confirmModal, setConfirmModal] = useState({ show: false, type: null, id: null })
 
   // Load drawings from localStorage
   useEffect(() => {
@@ -128,8 +131,15 @@ function App() {
       const [prevX, prevY] = currentStroke[currentStroke.length - 1]
       const [x, y, pressure] = point
 
-      context.strokeStyle = color
-      context.lineWidth = lineWidth * (pressure || 0.5)
+      if (isErasing) {
+        context.globalCompositeOperation = 'source-over'
+        context.strokeStyle = '#ffffff'
+        context.lineWidth = lineWidth * 2
+      } else {
+        context.globalCompositeOperation = 'source-over'
+        context.strokeStyle = color
+        context.lineWidth = lineWidth * (pressure || 0.5)
+      }
       context.lineCap = 'round'
       context.lineJoin = 'round'
 
@@ -179,6 +189,18 @@ function App() {
     if (!context || !canvasRef.current) return
     context.fillStyle = '#ffffff'
     context.fillRect(0, 0, window.innerWidth, window.innerHeight)
+    setConfirmModal({ show: false, type: null, id: null })
+  }
+
+  const handleConfirm = () => {
+    if (confirmModal.type === 'clear') {
+      clearCanvas()
+    } else if (confirmModal.type === 'delete') {
+      const updatedDrawings = drawings.filter(d => d.id !== confirmModal.id)
+      setDrawings(updatedDrawings)
+      localStorage.setItem('drawings', JSON.stringify(updatedDrawings))
+      setConfirmModal({ show: false, type: null, id: null })
+    }
   }
 
   const createNewDrawing = () => {
@@ -190,12 +212,6 @@ function App() {
   const loadDrawing = (id) => {
     setCurrentDrawingId(id)
     setShowMenu(false)
-  }
-
-  const deleteDrawing = (id) => {
-    const updatedDrawings = drawings.filter(d => d.id !== id)
-    setDrawings(updatedDrawings)
-    localStorage.setItem('drawings', JSON.stringify(updatedDrawings))
   }
 
   const backToMenu = () => {
@@ -253,26 +269,46 @@ function App() {
     <div className="draw-app">
       {showMenu ? (
         <div className="menu">
-          <h1 className="menu-title">Free Hand</h1>
-          <div className="drawings-grid">
-            <div className="new-canvas-card" onClick={createNewDrawing}>
-              <IoAdd className="plus-icon" />
+          <div className="menu-header">
+            <div className="logo-title">
+              <img src="/logo.svg" alt="Free Hand Logo" className="header-logo" />
+              <h1 className="menu-title">Free Hand</h1>
             </div>
-            {drawings.map((drawing) => (
-              <div key={drawing.id} className="drawing-card">
-                <img
-                  src={drawing.thumbnail}
-                  alt="Drawing"
-                  onClick={() => loadDrawing(drawing.id)}
-                />
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteDrawing(drawing.id)}
-                >
-                  <IoTrash />
-                </button>
-              </div>
-            ))}
+            <p className="menu-description">A simple drawing app. Create, save, and revisit your sketches anytime. Drawings are saved to your browser's cache.</p>
+            <button className="new-drawing-btn" onClick={createNewDrawing}>
+              <IoAdd /> New Drawing
+            </button>
+          </div>
+          <div className="drawings-container">
+            <div className="drawings-header">
+              <h2 className="drawings-title">Your Drawings</h2>
+              <span className="drawings-count">{drawings.length} {drawings.length === 1 ? 'drawing' : 'drawings'}</span>
+            </div>
+            <div className="drawings-inset">
+              {drawings.length === 0 ? (
+                <div className="empty-state">
+                  <p>No drawings yet. Create your first one!</p>
+                </div>
+              ) : (
+                <div className="drawings-grid">
+                  {drawings.map((drawing) => (
+                    <div key={drawing.id} className="drawing-card">
+                      <img
+                        src={drawing.thumbnail}
+                        alt="Drawing"
+                        onClick={() => loadDrawing(drawing.id)}
+                      />
+                      <button
+                        className="delete-btn"
+                        onClick={() => setConfirmModal({ show: true, type: 'delete', id: drawing.id })}
+                      >
+                        <IoTrash />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       ) : (
@@ -369,13 +405,51 @@ function App() {
 
                 <div className="palette-divider"></div>
 
-                <button className="clear-bubble" onClick={clearCanvas}>
+                <div className="tool-switch">
+                  <button
+                    className={`tool-btn ${!isErasing ? 'active' : ''}`}
+                    onClick={() => setIsErasing(false)}
+                  >
+                    <BsPencilFill />
+                  </button>
+                  <button
+                    className={`tool-btn ${isErasing ? 'active' : ''}`}
+                    onClick={() => setIsErasing(true)}
+                  >
+                    <BsEraser />
+                  </button>
+                </div>
+
+                <div className="palette-divider"></div>
+
+                <button className="clear-bubble" onClick={() => setConfirmModal({ show: true, type: 'clear', id: null })}>
                   <IoTrash />
                 </button>
               </div>
             )}
           </div>
         </>
+      )}
+
+      {confirmModal.show && (
+        <div className="confirm-overlay" onClick={() => setConfirmModal({ show: false, type: null, id: null })}>
+          <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <p className="confirm-message">
+              {confirmModal.type === 'clear' ? 'Clear the canvas?' : 'Delete this drawing?'}
+            </p>
+            <div className="confirm-buttons">
+              <button
+                className="confirm-btn cancel"
+                onClick={() => setConfirmModal({ show: false, type: null, id: null })}
+              >
+                Cancel
+              </button>
+              <button className="confirm-btn confirm" onClick={handleConfirm}>
+                {confirmModal.type === 'clear' ? 'Clear' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
