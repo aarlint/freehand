@@ -45,6 +45,14 @@ body {
   touch-action: none;
 }
 
+.canvas.pencil-mode {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23333' stroke='%23fff' stroke-width='1' d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E") 0 24, crosshair;
+}
+
+.canvas.eraser-mode {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' stroke='%23333' stroke-width='1.5' d='M16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.01 4.01 0 0 1-2.83 1.17H4v-2h5.17c.53 0 1.04-.21 1.41-.59l2.83-2.82-4.24-4.24L6.34 14.87a2 2 0 0 1-2.83 0L1.76 13.12a2 2 0 0 1 0-2.83l9.9-9.9a2 2 0 0 1 2.83 0l1.75 1.75z'/%3E%3C/svg%3E") 0 24, crosshair;
+}
+
 /* Expandable Bubble Palette */
 .palette {
   position: fixed;
