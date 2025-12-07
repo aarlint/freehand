@@ -315,7 +315,7 @@ function App() {
         <>
           <canvas
             ref={canvasRef}
-            className="canvas"
+            className={`canvas ${isErasing ? 'eraser-mode' : 'pencil-mode'}`}
             onPointerDown={startDrawing}
             onPointerMove={draw}
             onPointerUp={stopDrawing}

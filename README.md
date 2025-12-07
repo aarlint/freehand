@@ -1,16 +1,62 @@
-# React + Vite
+# Free Hand
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, elegant drawing app built with React. Create, save, and revisit your sketches anytime.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Freehand Drawing** - Natural brush strokes with pressure sensitivity support
+- **Color Palette** - 8 preset colors plus a full color picker
+- **Recent Colors** - Quick access to your recently used colors
+- **Adjustable Brush Sizes** - 5 brush sizes from fine to bold
+- **Eraser Tool** - Switch between pencil and eraser with a toggle
+- **Auto-Save** - Drawings are automatically saved to your browser's local storage
+- **Multiple Drawings** - Create and manage unlimited drawings
+- **Responsive Design** - Works on desktop, tablet, and mobile devices
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js 18+
+- npm or yarn
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/aarlint/freehand.git
+cd freehand
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+## Tech Stack
+
+- **React** - UI framework
+- **Vite** - Build tool and dev server
+- **perfect-freehand** - Smooth brush stroke rendering
+- **react-icons** - Icon library
+
+## Usage
+
+1. Click **New Drawing** to start a fresh canvas
+2. Use the **color palette** (bottom right) to pick colors and brush sizes
+3. Toggle between **pencil** and **eraser** modes
+4. Click **Menu** to save and return to your drawings gallery
+5. All drawings are saved automatically to your browser's cache
+
+## License
+
+MIT
